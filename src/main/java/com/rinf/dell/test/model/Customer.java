@@ -25,6 +25,13 @@ public class Customer {
 		this.comment = comment;
 	}
 
+	public Customer(Long id, String name, String mail, String comment) {
+		this.id = id;
+		this.name = name;
+		this.mail = mail;
+		this.comment = comment;
+	}
+
 	public Long getId() {
 		return id;
 	}
