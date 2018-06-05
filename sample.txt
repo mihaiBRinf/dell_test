@@ -1,0 +1,19 @@
+method type: POST
+URL: http://localhost:8080/addOrUpdateCustomer
+Request Body:
+{
+	"name":"testName",
+	"mail":"test@mail.com",
+	"comment":"test comment "
+}
+
+Response Body:
+{
+    "id": 1,
+    "name": "testName",
+    "mail": "test@mail.com",
+    "comment": "test comment ",
+    "responseMessage": "Customer was successfully created"
+}
+
+Please adapt port and hosts values to your specific configuration if they are different from the example.
