@@ -1,8 +1,10 @@
 package com.rinf.dell.test.service;
 
+import com.rinf.dell.test.CustomerUtils;
 import com.rinf.dell.test.dao.CustomerRepository;
 import com.rinf.dell.test.model.Customer;
 import com.rinf.dell.test.model.CustomerDto;
+import com.rinf.dell.test.model.CustomerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,27 +15,34 @@ public class CustomerService {
 	@Autowired
 	CustomerRepository customerRepository;
 
-	public CustomerDto addOrUpdateCustomer(CustomerDto customerDto){
+	private static final String MISSING_CUSTOMER_NAME = "Customer name is a mandatory field";
+	private static final String MAIL_NOT_VALID = "Please add a valid mail address";
+	private static final String CUSTOMER_ADDED = "Customer was successfully created";
+	private static final String CUSTOMER_UPDATED = "Customer was successfully updated";
+
+	public CustomerResponse addOrUpdateCustomer(CustomerDto customerDto){
+		if(!CustomerUtils.isMailValid(customerDto.getMail())){
+			return new CustomerResponse(MAIL_NOT_VALID);
+		}
+		if(customerDto.getName() == null || customerDto.getName().isEmpty()){
+			return new CustomerResponse(MISSING_CUSTOMER_NAME);
+		}
+
 		Customer existingCustomer = customerRepository.findByMail(customerDto.getMail());
 
 		if(existingCustomer != null){
-			return updateCustomer(customerDto, existingCustomer);
+			Customer customer = updateCustomer(customerDto, existingCustomer);
+			return new CustomerResponse(customer,CUSTOMER_UPDATED);
 		} else {
-			return convertCustomerToDto(customerRepository.save(convertDtoToCustomer(customerDto)));
+			Customer customer = customerRepository.save(
+					CustomerUtils.convertDtoToCustomer(customerDto));
+			return new CustomerResponse(customer,CUSTOMER_ADDED);
 		}
 	}
 
-	private CustomerDto updateCustomer(CustomerDto customerDto, Customer existingCustomer) {
+	private Customer updateCustomer(CustomerDto customerDto, Customer existingCustomer) {
 		existingCustomer.setName(customerDto.getName());
 		existingCustomer.setComment(customerDto.getComment());
-		return convertCustomerToDto(customerRepository.save(existingCustomer));
-	}
-
-	private Customer convertDtoToCustomer(CustomerDto customerDto) {
-		return new Customer(customerDto.getName(),customerDto.getMail(), customerDto.getComment());
-	}
-
-	private CustomerDto convertCustomerToDto(Customer customer) {
-		return new CustomerDto(customer.getName(),customer.getMail(), customer.getComment());
+		return customerRepository.save(existingCustomer);
 	}
 }

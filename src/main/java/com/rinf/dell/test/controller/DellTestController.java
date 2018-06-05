@@ -1,6 +1,7 @@
 package com.rinf.dell.test.controller;
 
 import com.rinf.dell.test.model.CustomerDto;
+import com.rinf.dell.test.model.CustomerResponse;
 import com.rinf.dell.test.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +20,8 @@ public class DellTestController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value="/addOrUpdateCustomer")
-	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
-	public CustomerDto addOrUpdateCustomer(@RequestBody CustomerDto customer){
+	public CustomerResponse addOrUpdateCustomer(@RequestBody CustomerDto customer){
 		return customerService.addOrUpdateCustomer(customer);
 	}
 
